@@ -8,6 +8,10 @@ import de.htwg.se.rummi.controller.ControllerInterface
 import scala.io.StdIn
 
 object Rummi {
+  val injector = Guice.createInjector(new RummiModule)
+  val controller = injector.getInstance(classOf[ControllerInterface])
+  val tui = new Tui(controller)
+
 
   def main(args: Array[String]): Unit = {
 
@@ -38,12 +42,10 @@ object Rummi {
       }
     }
 
-    val injector = Guice.createInjector(new RummiModule)
-    val controller = injector.getInstance(classOf[ControllerInterface])
 
     controller.initGame(playerNames)
 
-    val tui = new Tui(controller)
+
     tui.printTui
 
     val gui = new SwingGui(controller)

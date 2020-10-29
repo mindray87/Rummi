@@ -53,6 +53,10 @@ class Controller @Inject()() extends ControllerInterface {
     gameState
   }
 
+  def gameStateToString: String = {
+    " Current Game State: " + gameState + "\n"
+  }
+
   def setGameState(g: GameState): Unit = {
     gameState = g
     publish(new GameStateChanged)
@@ -60,6 +64,10 @@ class Controller @Inject()() extends ControllerInterface {
 
   def field: Grid = {
     game.grid
+  }
+
+  def fieldToString: String = {
+    game.grid.toStringField
   }
 
   def players: List[Player] = {
@@ -80,6 +88,10 @@ class Controller @Inject()() extends ControllerInterface {
 
   def activePlayer: Player = {
     players(game.activePlayerIndex)
+  }
+
+  def activePlayerToString: String = {
+    " This is the rack of: " + activePlayer.name + "\n"
   }
 
   // finish
@@ -107,6 +119,10 @@ class Controller @Inject()() extends ControllerInterface {
   }
 
   def rackOfActivePlayer: Grid = getRack(activePlayer)
+
+  def rackOfActivePlayerToString: String = {
+    getRack(activePlayer).toStringRack
+  }
 
   def getRack(player: Player): Grid = {
     game.racks.find(x => x._1 == player) match {

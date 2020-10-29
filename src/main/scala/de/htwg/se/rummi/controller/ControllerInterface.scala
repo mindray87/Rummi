@@ -14,13 +14,21 @@ trait ControllerInterface extends Publisher {
 
   def getGameState: GameState
 
+  def gameStateToString: String
+
   def activePlayer: Player
+
+  def activePlayerToString: String
 
   def game: Game
 
   def rackOfActivePlayer: Grid
 
+  def rackOfActivePlayerToString: String
+
   def field: Grid
+
+  def fieldToString: String
 
   def moveTile(from: String, to: String): Unit
 

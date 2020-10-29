@@ -1,11 +1,65 @@
 package de.htwg.se.rummi.model
-
+import de.htwg.se.rummi.Const
 import play.api.libs.json.{JsNumber, JsObject, Json}
 
 case class Grid(ROWS: Int, COLS: Int, tiles: Map[(Int, Int), Tile]) {
 
   tiles.keys.find(x => x._1 > ROWS || x._2 > COLS)
     .map(x => throw new IllegalArgumentException("Tile indices '" + x + "' out of bounds."))
+
+  def toStringField: String = {
+    var field = ""
+    val letters = (('A' to ('A' + Const.GRID_COLS - 1).toChar).mkString("        ", "       ", "\n"))
+    val lineseparator = "    x-------" + ("x-------" * (Const.GRID_COLS -1)) + "x\n"
+    val line = "    |       " + ("|       " * (Const.GRID_COLS -1)) + "|\n"
+
+    field = letters
+    for (numLine <- 1 to Const.GRID_ROWS) {
+      val lineWithContent = "  " + String.format("%s", numLine.toString) + " |   0   " + ("|   0   " * (Const.GRID_COLS -1)) + "|\n"
+      field = field + lineseparator + line + lineWithContent + line
+    }
+    field = field + lineseparator + "\n\n"
+    val separatorOfGrids = " _" + "_" * 110 + "\n\n\n"
+    for {
+      row <- 1 until Const.GRID_ROWS + 1
+      col <- 1 until Const.GRID_COLS + 1
+    } if (tiles.get(row,col).isEmpty) {
+      field = field.replaceFirst("   0   ", "       ")
+      }
+      else {
+      field = field.replaceFirst("   0   ", tiles(row, col).tileToString)
+      }
+    field + separatorOfGrids
+  }
+
+  def toStringRack: String = {
+    var fieldRack = ""
+    val lineseparatorRack = "    x-------" + ("x-------" * (Const.RACK_COLS -1)) + "x\n"
+    val lineRack = "    |       " + ("|       " * (Const.RACK_COLS -1)) + "|\n"
+
+    for (numbLine <- (Const.GRID_ROWS + 1) to (Const.GRID_ROWS + Const.RACK_ROWS)) {
+      if (numbLine < 10) {
+        val lineRackWithContent = "  " + String.format("%s", numbLine.toString) + " |   0   " + ("|   0   " * (Const.RACK_COLS -1)) + "|\n"
+        fieldRack = fieldRack + (lineseparatorRack + lineRack + lineRackWithContent + lineRack)
+      }
+      else {
+        val lineRackWithContent = " " + String.format("%s", numbLine.toString) + " |   0   " + ("|   0   " * (Const.RACK_COLS -1)) + "|\n"
+        fieldRack = fieldRack + lineseparatorRack + lineRack + lineRackWithContent + lineRack
+      }
+    }
+    fieldRack = fieldRack + lineseparatorRack + "\n\n\n"
+
+    for {
+      row <- 1 until Const.RACK_ROWS + 1
+      col <- 1 until Const.RACK_COLS + 1
+    } if (tiles.get(row, col).isEmpty) {
+      fieldRack = fieldRack.replaceFirst("   0   ", "       ")
+    }
+      else {
+      fieldRack = fieldRack.replaceFirst("   0   ", tiles(row, col).tileToString)
+      }
+    fieldRack
+  }
 
   def getTileAt(row: Int, col: Int): Option[Tile] = {
     tiles.get((row, col))
